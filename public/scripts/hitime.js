@@ -10,53 +10,11 @@ var SpreadSheetContainer = React.createClass({
   getInitialState: function() {
     return {
         "data": [
-          [1, "HashedIn", "Sales", 90, "Weekly Sales Meeting", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [2, "Technology", "Training", 30, "Handling forms with React & Redux", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"]
+          [1, "HashedIn", "Sales", 90, "Weekly Sales Meeting"],
+          [2, "Technology", "Training", 30, "Handling forms with React & Redux"],
+          [3, "Jican-Sales", "Review", 10, "Presentation Review"]
         ],
-        "headerRow": ["#", "Code", "Type", "Time Spent", "Description", "dog", "cat", "elephant", "turkey", "monkey", "leopard", "lion", "tiger", "~!@#$%^&*()_+=;':,.<>/?", "brinjal", "aubergine", 4343.32, "whiteboard", "tv", "video", "audio"],
+        "headerRow": ["#", "Code", "Type", "Time Spent", "Description"],
         "selectedCell": {
           "row": 1,
           "col": 2,
@@ -124,16 +82,12 @@ var SpreadSheetContainer = React.createClass({
   },
   handleKeyDown: function(selectedCell, e) {
     if (e.key === 'ArrowRight') {
-      if (!this.state.selectedCell.isEditMode) {
-        this.moveRight();
-        e.preventDefault();
-      }
+      this.moveRight();
+      e.preventDefault();
     }
     else if (e.key === 'ArrowLeft') {
-      if (!this.state.selectedCell.isEditMode) {
-        this.moveLeft();
-        e.preventDefault();
-      }
+      this.moveLeft();
+      e.preventDefault();
     }
     else if (e.key === 'ArrowUp') {
       this.moveUp();

@@ -1,9 +1,15 @@
 .grid {
   border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
 }
 .grid td {
   border: 1px solid #999;
-  padding: 0;
+  padding: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 31px;
 }
 
 .grid th {
@@ -19,6 +25,7 @@
     border: none;
     padding: 2px;
     outline: 1px solid transparent;
+    height: 100%;
 }
 
 .grid .cell:hover {
