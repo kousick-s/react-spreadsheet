@@ -34,16 +34,44 @@ var SpreadSheetContainer = React.createClass({
   moveDown: function() {
     this.moveVertically(1);
   },
+  constrainHorizontally: function(pos) {
+    var newPos;
+    var numColumns = this.state.headerRow.length;
+    if (pos > numColumns - 1) {
+      newPos = numColumns - 1;
+    }
+    else if (pos < 0) {
+      newPos = 0;
+    }
+    else {
+      newPos = pos;
+    }
+    return newPos;
+  },
+  constrainVertically: function(pos) {
+    var newPos;
+    var numRows = this.state.data.length;
+    if (pos > numRows - 1) {
+      newPos = numRows - 1;
+    }
+    else if (pos < 0) {
+      newPos = 0;
+    }
+    else {
+      newPos = pos;
+    }
+    return newPos;
+  },
   moveHorizontally: function(direction) {
     var selectedCell = this.state.selectedCell;
     var newSelectedCell = Object.assign({}, 
-          selectedCell, {"col": selectedCell.col + direction});
+          selectedCell, {"col": this.constrainHorizontally(selectedCell.col + direction)});
     this.setState({"selectedCell": newSelectedCell});
   },
   moveVertically: function(direction) {
     var selectedCell = this.state.selectedCell;
     var newSelectedCell = Object.assign({}, 
-          selectedCell, {"row": selectedCell.row + direction});
+          selectedCell, {"row": this.constrainVertically(selectedCell.row + direction)});
     this.setState({"selectedCell": newSelectedCell});
   },
   handleKeyDown: function(selectedCell, e) {
@@ -67,14 +95,29 @@ var SpreadSheetContainer = React.createClass({
       this.setState({"selectedCell": selectedCell});
       e.preventDefault();
     }
+    //enter
     else if (e.keyCode === 13) {
       var selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": true});
       this.setState({"selectedCell": selectedCell});
       e.preventDefault();
     }
+    //enter
+    else if (e.keyCode === 9) {
+      if (e.shiftKey) {
+        this.moveLeft();
+      }
+      else {
+       this.moveRight(); 
+      }
+      e.preventDefault();
+    }
   },
   handleClick: function(clickedCell, e) {
     var selectedCell = Object.assign({}, this.state.selectedCell, clickedCell);
+    this.setState({"selectedCell": selectedCell});
+  },
+  handleOnFocus: function(cell, e) {
+    var selectedCell = Object.assign({}, this.state.selectedCell, cell);
     this.setState({"selectedCell": selectedCell});
   },
   render: function() {
@@ -83,7 +126,8 @@ var SpreadSheetContainer = React.createClass({
           headerRow={this.state.headerRow}
           selectedCell={this.state.selectedCell}
           onKeyDown={this.handleKeyDown}
-          handleClick={this.handleClick}/>
+          handleClick={this.handleClick}
+          handleOnFocus={this.handleOnFocus}/>
     )
   }
 })
@@ -106,7 +150,8 @@ var SpreadSheet = React.createClass({
                     key={rownum}
                     selectedCell={props.selectedCell}
                     onKeyDown={props.onKeyDown}
-                    handleClick={props.handleClick}/>
+                    handleClick={props.handleClick}
+                    handleOnFocus={props.handleOnFocus}/>
           })}
         </tbody>
       </table>
@@ -124,7 +169,8 @@ var Row = React.createClass({
                   key={props.rownum + "-" + colnum}
                   selectedCell={props.selectedCell}
                   onKeyDown={props.onKeyDown}
-                  handleClick={props.handleClick}/>
+                  handleClick={props.handleClick}
+                  handleOnFocus={props.handleOnFocus}/>
         })}
       </tr>
     )
@@ -139,6 +185,10 @@ var Cell = React.createClass({
   handleCellClick: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.handleClick(me, e);
+  },
+  handleOnFocus: function(e) {
+    var me = {"row": this.props.rownum, "col": this.props.colnum};
+    this.props.handleOnFocus(me, e);
   },
   render: function() {
     var props = this.props;
@@ -169,6 +219,7 @@ var Cell = React.createClass({
         <td tabIndex="0" className={className}
           onKeyDown={this.handleKeyDown}
           onClick={this.handleCellClick}
+          onFocus={this.handleOnFocus}
           ref={function(self){
             if(isSelected && self != null) {
               self.focus();
