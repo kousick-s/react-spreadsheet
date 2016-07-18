@@ -82,12 +82,16 @@ var SpreadSheetContainer = React.createClass({
   },
   handleKeyDown: function(selectedCell, e) {
     if (e.key === 'ArrowRight') {
-      this.moveRight();
-      e.preventDefault();
+      if (!this.state.selectedCell.isEditMode) {
+        this.moveRight();
+        e.preventDefault();
+      }
     }
     else if (e.key === 'ArrowLeft') {
-      this.moveLeft();
-      e.preventDefault();
+      if (!this.state.selectedCell.isEditMode) {
+        this.moveLeft();
+        e.preventDefault();
+      }
     }
     else if (e.key === 'ArrowUp') {
       this.moveUp();
