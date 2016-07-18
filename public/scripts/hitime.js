@@ -114,6 +114,7 @@ var SpreadSheetContainer = React.createClass({
   },
   handleClick: function(clickedCell, e) {
     var selectedCell = Object.assign({}, this.state.selectedCell, clickedCell);
+    selectedCell["isEditMode"] = true;
     this.setState({"selectedCell": selectedCell});
   },
   handleOnFocus: function(cell, e) {
