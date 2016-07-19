@@ -22,9 +22,8 @@
   border: 1px solid #999;
   padding: 3px;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
-  height: 31px;
+  height: 48px;
 }
 
 .grid th {
@@ -35,7 +34,7 @@
   text-align: center;
 }
 
-.grid input {
+.grid .textcell {
     background-color: #eee;
     border: none;
     outline: 1px solid transparent;
@@ -54,6 +53,10 @@
 .grid .selected {
   background-color: #eee;
   outline: 2px solid blue;
+}
+
+.Select-menu-outer {
+  z-index: 999 !important;
 }
 
 body {

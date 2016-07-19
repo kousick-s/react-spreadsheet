@@ -16,9 +16,9 @@ var SpreadSheetContainer = React.createClass({
         ],
         "headerRow": ["#", "Code", "Type", "Time Spent", "Description"],
         "selectedCell": {
-          "row": 1,
-          "col": 2,
-          "isEditMode": true
+          "row": 0,
+          "col": 0,
+          "isEditMode": false
         }
     }
   },
@@ -154,10 +154,10 @@ var SpreadSheetContainer = React.createClass({
     data[selectedCell.row][selectedCell.col] = "";
     this.setState({"data": data});
   },
-  handleOnChange: function(cell, e) {
+  handleOnChange: function(cell, value) {
     /*TODO: okay to make inplace changes?*/
     var data = this.state.data;
-    data[cell.row][cell.col] = e.target.value;
+    data[cell.row][cell.col] = value;
     this.setState({"data": data});
   },
   render: function() {
@@ -229,6 +229,7 @@ var Row = React.createClass({
 
 var Cell = React.createClass({
   handleKeyDown: function(e) {
+    console.log(e);
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onKeyDown(me, e);
   },
@@ -242,7 +243,7 @@ var Cell = React.createClass({
   },
   handleOnChange: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.handleOnChange(me, e);
+    this.props.handleOnChange(me, e.value);
   },
   render: function() {
     var props = this.props;
@@ -251,21 +252,58 @@ var Cell = React.createClass({
               props.colnum === selectedCell.col);
     var isEditMode = isSelected && selectedCell.isEditMode;
     var className = isSelected ? "cell selected" : "cell";
-
     var cell;
+    var options=[
+        { value: 'Client Meet', label: 'Client Meet'},
+        { value: 'Consulting', label: 'Consulting'},
+        { value: 'Debug', label: 'Debug'},
+        { value: 'Demo', label: 'Demo'},
+        { value: 'Deployment', label: 'Deployment'},
+        { value: 'Design', label: 'Design'},
+        { value: 'Dev', label: 'Dev'},
+        { value: 'Documentation', label: 'Documentation'},
+        { value: 'Email', label: 'Email'},
+        { value: 'Finance', label: 'Finance'},
+        { value: 'Help', label: 'Help'},
+        { value: 'Holiday', label: 'Holiday'},
+        { value: 'Internal', label: 'Internal'},
+        { value: 'Interview', label: 'Interview'},
+        { value: 'Learning', label: 'Learning'},
+        { value: 'Meeting', label: 'Meeting'},
+        { value: 'Mock up', label: 'Mock up'},
+        { value: 'Onboarding', label: 'Onboarding'},
+        { value: 'OOO', label: 'OOO'},
+        { value: 'Other', label: 'Other'},
+        { value: 'Planning', label: 'Planning'},
+        { value: 'PMO', label: 'PMO'},
+        { value: 'POC', label: 'POC'},
+        { value: 'Pre-sales', label: 'Pre-sales'},
+        { value: 'Presentation', label: 'Presentation'},
+        { value: 'Proposals', label: 'Proposals'},
+        { value: 'Recruitment', label: 'Recruitment'},
+        { value: 'Review', label: 'Review'},
+        { value: 'Rework', label: 'Rework'},
+        { value: 'Scrum', label: 'Scrum'},
+        { value: 'Testing', label: 'Testing'},
+        { value: 'Training', label: 'Training'},
+        { value: 'UX', label: 'UX'}
+    ];
+
     if (isEditMode) {
       cell = (
         <td className={className} 
-          onKeyDown={this.handleKeyDown}
+          onKeyDownCapture={this.handleKeyDown}
           onClick={this.handleCellClick}>
-        <input type="text" 
-          ref={function(self){
-              if(isSelected && self != null) {
-                self.focus();
-              }
-            }}
-          onChange={this.handleOnChange}
-          value={this.props.data}/>
+          
+          <Select className="selectcell" options={options}
+            ref={function(self){
+                if(isSelected && self != null) {
+                  self.focus();
+                }
+              }}
+            onChange={this.handleOnChange}
+            value={this.props.data}/>
+    
       </td>
       )
     }
