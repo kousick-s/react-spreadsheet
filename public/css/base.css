@@ -3,6 +3,21 @@
   table-layout: fixed;
   width: 100%;
 }
+.grid col.id {
+  width: 35px;
+}
+.grid col.code {
+  width: 15%;
+}
+.grid col.type {
+  width: 12%;
+}
+.grid col.time {
+  width: 5%;
+}
+.grid col.description {
+  width: 65%;
+}
 .grid td {
   border: 1px solid #999;
   padding: 3px;
@@ -24,6 +39,7 @@
     background-color: #eee;
     border: none;
     outline: 1px solid transparent;
+    width: 100%;
     height: 100%;
 }
 

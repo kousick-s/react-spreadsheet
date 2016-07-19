@@ -12,7 +12,7 @@ var SpreadSheetContainer = React.createClass({
         "data": [
           [1, "HashedIn", "Sales", 90, "Weekly Sales Meeting"],
           [2, "Technology", "Training", 30, "Handling forms with React & Redux"],
-          [3, "Jican-Sales", "Review", 10, "Presentation Review"]
+          [300, "Jican-Sales", "Review", 10, "Presentation Review"]
         ],
         "headerRow": ["#", "Code", "Type", "Time Spent", "Description"],
         "selectedCell": {
@@ -127,7 +127,14 @@ var SpreadSheetContainer = React.createClass({
       }
       e.preventDefault();
     }
-    else {
+    //backspace or delete
+    else if (e.keyCode === 8 || e.keyCode === 46) {
+      if (!this.state.selectedCell.isEditMode) {
+        this.clearCell();
+        e.preventDefault();
+      }
+    }
+    else if (isPrintableChar(e.keyCode)) {
       var selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": true});
       this.setState({"selectedCell": selectedCell});
     }
@@ -140,6 +147,12 @@ var SpreadSheetContainer = React.createClass({
   handleOnFocus: function(cell, e) {
     var selectedCell = Object.assign({}, this.state.selectedCell, cell);
     this.setState({"selectedCell": selectedCell});
+  },
+  clearCell: function() {
+    var data = this.state.data;
+    var selectedCell = this.state.selectedCell;
+    data[selectedCell.row][selectedCell.col] = "";
+    this.setState({"data": data});
   },
   handleOnChange: function(cell, e) {
     /*TODO: okay to make inplace changes?*/
@@ -165,6 +178,13 @@ var SpreadSheet = React.createClass({
     var props = this.props;
     return (
       <table className="grid">
+        <colgroup>
+          <col className="id"/>
+          <col className="code"/>
+          <col className="type"/>
+          <col className="time"/>
+          <col className="description"/>
+        </colgroup>
         <thead>
         <tr>
           {props.headerRow.map(function(cell, colnum){
@@ -284,3 +304,14 @@ ReactDOM.render(
   <HiTime />,
   document.getElementById('content')
 );
+
+var isPrintableChar = function(keycode) {
+  var valid = 
+        (keycode > 47 && keycode < 58)   || // number keys
+        keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+        (keycode > 64 && keycode < 91)   || // letter keys
+        (keycode > 95 && keycode < 112)  || // numpad keys
+        (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+        (keycode > 218 && keycode < 223);   // [\]' (in order)
+  return valid;
+}
