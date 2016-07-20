@@ -1,3 +1,25 @@
+if (typeof Object.assign != 'function') {
+  Object.assign = function(target) {
+    'use strict';
+    if (target == null) {
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    target = Object(target);
+    for (var index = 1; index < arguments.length; index++) {
+      var source = arguments[index];
+      if (source != null) {
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+    }
+    return target;
+  };
+}
+
 var TimeSheetSummary = function(props) {
   return (
     <div>
@@ -71,13 +93,13 @@ var SpreadSheetContainer = React.createClass({
   moveHorizontally: function(direction) {
     var selectedCell = this.state.selectedCell;
     var newSelectedCell = Object.assign({}, 
-          selectedCell, {"col": this.constrainHorizontally(selectedCell.col + direction)});
+          selectedCell, {"isEditMode": false, "col": this.constrainHorizontally(selectedCell.col + direction)});
     this.setState({"selectedCell": newSelectedCell});
   },
   moveVertically: function(direction) {
     var selectedCell = this.state.selectedCell;
     var newSelectedCell = Object.assign({}, 
-          selectedCell, {"row": this.constrainVertically(selectedCell.row + direction)});
+          selectedCell, {"isEditMode": false, "row": this.constrainVertically(selectedCell.row + direction)});
     this.setState({"selectedCell": newSelectedCell});
   },
   handleKeyDownCapture: function(e) {
@@ -90,24 +112,26 @@ var SpreadSheetContainer = React.createClass({
     }
   },
   handleKeyDown: function(e) {
-    if (e.key === 'ArrowRight') {
-      this.moveRight();
-      e.preventDefault();
-    }
-    else if (e.key === 'ArrowLeft') {
-      this.moveLeft();
-      e.preventDefault();
-    }
-    else if (e.key === 'ArrowUp') {
-      this.moveUp();
-      e.preventDefault();
-    }
-    else if (e.key === 'ArrowDown') {
-      this.moveDown();
-      e.preventDefault();
+    if (!this.state.selectedCell.isEditMode) {
+      if (e.key === 'ArrowRight') {
+        this.moveRight();
+        e.preventDefault();
+      }
+      else if (e.key === 'ArrowLeft') {
+        this.moveLeft();
+        e.preventDefault();
+      }
+      else if (e.key === 'ArrowUp') {
+        this.moveUp();
+        e.preventDefault();
+      }
+      else if (e.key === 'ArrowDown') {
+        this.moveDown();
+        e.preventDefault();
+      }
     }
     //enter
-    else if (e.keyCode === 13) {
+    if (e.keyCode === 13) {
       if (!this.state.selectedCell.isEditMode) {
         var selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": true});
         this.setState({"selectedCell": selectedCell});
