@@ -82,16 +82,12 @@ var SpreadSheetContainer = React.createClass({
   },
   handleKeyDown: function(selectedCell, e) {
     if (e.key === 'ArrowRight') {
-      if (!this.state.selectedCell.isEditMode) {
-        this.moveRight();
-        e.preventDefault();
-      }
+      this.moveRight();
+      e.preventDefault();
     }
     else if (e.key === 'ArrowLeft') {
-      if (!this.state.selectedCell.isEditMode) {
-        this.moveLeft();
-        e.preventDefault();
-      }
+      this.moveLeft();
+      e.preventDefault();
     }
     else if (e.key === 'ArrowUp') {
       this.moveUp();
@@ -166,9 +162,9 @@ var SpreadSheetContainer = React.createClass({
           headerRow={this.state.headerRow}
           selectedCell={this.state.selectedCell}
           onKeyDown={this.handleKeyDown}
-          handleClick={this.handleClick}
-          handleOnFocus={this.handleOnFocus}
-          handleOnChange={this.handleOnChange}/>
+          onClick={this.handleClick}
+          onFocus={this.handleOnFocus}
+          onChange={this.handleOnChange}/>
     )
   }
 })
@@ -198,9 +194,9 @@ var SpreadSheet = React.createClass({
                     key={rownum}
                     selectedCell={props.selectedCell}
                     onKeyDown={props.onKeyDown}
-                    handleClick={props.handleClick}
-                    handleOnFocus={props.handleOnFocus}
-                    handleOnChange={props.handleOnChange}/>
+                    onClick={props.onClick}
+                    onFocus={props.onFocus}
+                    onChange={props.onChange}/>
           })}
         </tbody>
       </table>
@@ -210,119 +206,179 @@ var SpreadSheet = React.createClass({
 var Row = React.createClass({
   render: function() {
     var props = this.props;
+    var renderers = [ReadOnlyCell, SelectCell, 
+                      SelectCell, TextCell, TextCell];
+    var selectedCell = props.selectedCell;
+    var rownum = props.rownum;
+
     return (
       <tr>
         {this.props.data.map(function(cell, colnum){
-          return <Cell data={cell} 
-                  rownum={props.rownum} colnum={colnum}
-                  key={props.rownum + "-" + colnum}
-                  selectedCell={props.selectedCell}
+          var isSelected = (rownum === selectedCell.row && 
+              colnum === selectedCell.col);
+          var isEditMode = isSelected && selectedCell.isEditMode;
+          var Renderer;
+          if(isEditMode) {
+            Renderer = renderers[colnum];
+          }
+          else {
+            Renderer = ReadOnlyCell;
+          }
+
+          return <Renderer data={cell} 
+                  rownum={rownum} colnum={colnum}
+                  key={rownum + "-" + colnum + isEditMode}
+                  isSelected={isSelected}
+                  isEditMode={isEditMode}
                   onKeyDown={props.onKeyDown}
-                  handleClick={props.handleClick}
-                  handleOnFocus={props.handleOnFocus}
-                  handleOnChange={props.handleOnChange}/>
+                  onClick={props.onClick}
+                  onFocus={props.onFocus}
+                  onChange={props.onChange}/>
         })}
       </tr>
     )
   }
 })
 
-var Cell = React.createClass({
+var ReadOnlyCell = React.createClass({
   handleKeyDown: function(e) {
-    console.log(e);
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onKeyDown(me, e);
   },
   handleCellClick: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.handleClick(me, e);
+    this.props.onClick(me, e);
   },
   handleOnFocus: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.handleOnFocus(me, e);
-  },
-  handleOnChange: function(e) {
-    var me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.handleOnChange(me, e.value);
+    this.props.onFocus(me, e);
   },
   render: function() {
     var props = this.props;
-    var selectedCell = props.selectedCell;
-    var isSelected = (props.rownum === selectedCell.row && 
-              props.colnum === selectedCell.col);
-    var isEditMode = isSelected && selectedCell.isEditMode;
+    var isSelected = props.isSelected;
     var className = isSelected ? "cell selected" : "cell";
-    var cell;
-    var options=[
-        { value: 'Client Meet', label: 'Client Meet'},
-        { value: 'Consulting', label: 'Consulting'},
-        { value: 'Debug', label: 'Debug'},
-        { value: 'Demo', label: 'Demo'},
-        { value: 'Deployment', label: 'Deployment'},
-        { value: 'Design', label: 'Design'},
-        { value: 'Dev', label: 'Dev'},
-        { value: 'Documentation', label: 'Documentation'},
-        { value: 'Email', label: 'Email'},
-        { value: 'Finance', label: 'Finance'},
-        { value: 'Help', label: 'Help'},
-        { value: 'Holiday', label: 'Holiday'},
-        { value: 'Internal', label: 'Internal'},
-        { value: 'Interview', label: 'Interview'},
-        { value: 'Learning', label: 'Learning'},
-        { value: 'Meeting', label: 'Meeting'},
-        { value: 'Mock up', label: 'Mock up'},
-        { value: 'Onboarding', label: 'Onboarding'},
-        { value: 'OOO', label: 'OOO'},
-        { value: 'Other', label: 'Other'},
-        { value: 'Planning', label: 'Planning'},
-        { value: 'PMO', label: 'PMO'},
-        { value: 'POC', label: 'POC'},
-        { value: 'Pre-sales', label: 'Pre-sales'},
-        { value: 'Presentation', label: 'Presentation'},
-        { value: 'Proposals', label: 'Proposals'},
-        { value: 'Recruitment', label: 'Recruitment'},
-        { value: 'Review', label: 'Review'},
-        { value: 'Rework', label: 'Rework'},
-        { value: 'Scrum', label: 'Scrum'},
-        { value: 'Testing', label: 'Testing'},
-        { value: 'Training', label: 'Training'},
-        { value: 'UX', label: 'UX'}
-    ];
-
-    if (isEditMode) {
-      cell = (
-        <td className={className} 
-          onKeyDownCapture={this.handleKeyDown}
-          onClick={this.handleCellClick}>
-          
-          <Select className="selectcell" options={options}
-            ref={function(self){
-                if(isSelected && self != null) {
-                  self.focus();
-                }
-              }}
-            onChange={this.handleOnChange}
-            value={this.props.data}/>
-    
+    return (
+      <td tabIndex="0" className={className}
+        onKeyDown={this.handleKeyDown}
+        onClick={this.handleCellClick}
+        onFocus={this.handleOnFocus}
+        ref={function(self){
+          if(isSelected && self != null) {
+            self.focus();
+          }
+        }}>
+        {this.props.data}
       </td>
-      )
+    );
+  }
+})
+
+var options=[
+    { value: 'Client Meet', label: 'Client Meet'},
+    { value: 'Consulting', label: 'Consulting'},
+    { value: 'Debug', label: 'Debug'},
+    { value: 'Demo', label: 'Demo'},
+    { value: 'Deployment', label: 'Deployment'},
+    { value: 'Design', label: 'Design'},
+    { value: 'Dev', label: 'Dev'},
+    { value: 'Documentation', label: 'Documentation'},
+    { value: 'Email', label: 'Email'},
+    { value: 'Finance', label: 'Finance'},
+    { value: 'Help', label: 'Help'},
+    { value: 'Holiday', label: 'Holiday'},
+    { value: 'Holiday', label: 'Holiday'},
+    { value: 'Internal', label: 'Internal'},
+    { value: 'Interview', label: 'Interview'},
+    { value: 'Learning', label: 'Learning'},
+    { value: 'Meeting', label: 'Meeting'},
+    { value: 'Mock up', label: 'Mock up'},
+    { value: 'Onboarding', label: 'Onboarding'},
+    { value: 'OOO', label: 'OOO'},
+    { value: 'Other', label: 'Other'},
+    { value: 'Planning', label: 'Planning'},
+    { value: 'PMO', label: 'PMO'},
+    { value: 'POC', label: 'POC'},
+    { value: 'Presales', label: 'Presales'},
+    { value: 'Presentation', label: 'Presentation'},
+    { value: 'Proposals', label: 'Proposals'},
+    { value: 'Recruitment', label: 'Recruitment'},
+    { value: 'Review', label: 'Review'},
+    { value: 'Rework', label: 'Rework'},
+    { value: 'Scrum', label: 'Scrum'},
+    { value: 'Testing', label: 'Testing'},
+    { value: 'Training', label: 'Training'},
+    { value: 'UX', label: 'UX'}
+];
+
+var TextCell = React.createClass({
+  onKeyDown: function(e) {
+    /*
+      Every cell must propagate escape to the parent for it to handle
+      TODO: Make this capture instead of bubbling, 
+      and let the spreadsheet handle this.
+    */
+    if (e.key === 'Escape') {
+      var me = {"row": this.props.rownum, "col": this.props.colnum};
+      this.props.onKeyDown(me, e);
     }
-    else {
-      cell = (
-        <td tabIndex="0" className={className}
-          onKeyDown={this.handleKeyDown}
-          onClick={this.handleCellClick}
-          onFocus={this.handleOnFocus}
+  },
+  onChange: function(e) {
+    var me = {"row": this.props.rownum, "col": this.props.colnum};
+    this.props.onChange(me, e.target.value);
+  },
+  render: function() {
+    var props = this.props;
+    var isSelected = props.isSelected;
+
+    return (
+      <td className="cell selected"
+        onKeyDown={this.onKeyDown}>
+        <input type="text" className="textcell"
           ref={function(self){
-            if(isSelected && self != null) {
-              self.focus();
-            }
-          }}>
-          {this.props.data}
-        </td>
-      )
+              if(isSelected && self != null) {
+                self.focus();
+              }
+            }}
+          onChange={this.onChange}
+          value={this.props.data}/>
+      </td>
+    );
+  }
+})
+
+var SelectCell = React.createClass({
+  onKeyDown: function(e) {
+    /*
+      Every cell must propagate escape to the parent for it to handle
+      TODO: Make this capture instead of bubbling, 
+      and let the spreadsheet handle this.
+    */
+    if (e.key === 'Escape') {
+      var me = {"row": this.props.rownum, "col": this.props.colnum};
+      this.props.onKeyDown(me, e);
     }
-    return cell;
+  },
+  onChange: function(e) {
+    var me = {"row": this.props.rownum, "col": this.props.colnum};
+    this.props.onChange(me, e ? e.value: "");
+  },
+  render: function() {
+    var props = this.props;
+    var isSelected = props.isSelected;
+
+    return (
+      <td className="cell selected" 
+        onKeyDownCapture={this.onKeyDown}>
+        <Select className="selectcell" options={options}
+          ref={function(self){
+              if(isSelected && self != null) {
+                self.focus();
+              }
+            }}
+          onChange={this.onChange}
+          value={this.props.data}/>
+      </td>
+    );
   }
 })
 
