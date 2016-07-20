@@ -80,7 +80,16 @@ var SpreadSheetContainer = React.createClass({
           selectedCell, {"row": this.constrainVertically(selectedCell.row + direction)});
     this.setState({"selectedCell": newSelectedCell});
   },
-  handleKeyDown: function(selectedCell, e) {
+  handleKeyDownCapture: function(e) {
+    if (e.key === 'Escape') {
+      //console.log(e);
+      var selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": false});
+      this.setState({"selectedCell": selectedCell});
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  },
+  handleKeyDown: function(e) {
     if (e.key === 'ArrowRight') {
       this.moveRight();
       e.preventDefault();
@@ -95,11 +104,6 @@ var SpreadSheetContainer = React.createClass({
     }
     else if (e.key === 'ArrowDown') {
       this.moveDown();
-      e.preventDefault();
-    }
-    else if (e.key === 'Escape') {
-      var selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": false});
-      this.setState({"selectedCell": selectedCell});
       e.preventDefault();
     }
     //enter
@@ -162,6 +166,7 @@ var SpreadSheetContainer = React.createClass({
           headerRow={this.state.headerRow}
           selectedCell={this.state.selectedCell}
           onKeyDown={this.handleKeyDown}
+          onKeyDownCapture={this.handleKeyDownCapture}
           onClick={this.handleClick}
           onFocus={this.handleOnFocus}
           onChange={this.handleOnChange}/>
@@ -173,7 +178,9 @@ var SpreadSheet = React.createClass({
   render: function() {
     var props = this.props;
     return (
-      <table className="grid">
+      <table className="grid"
+        onKeyDown={this.props.onKeyDown}
+        onKeyDownCapture={this.props.onKeyDownCapture}>
         <colgroup>
           <col className="id"/>
           <col className="code"/>
@@ -193,7 +200,6 @@ var SpreadSheet = React.createClass({
             return <Row data={row} rownum={rownum}
                     key={rownum}
                     selectedCell={props.selectedCell}
-                    onKeyDown={props.onKeyDown}
                     onClick={props.onClick}
                     onFocus={props.onFocus}
                     onChange={props.onChange}/>
@@ -230,7 +236,6 @@ var Row = React.createClass({
                   key={rownum + "-" + colnum + isEditMode}
                   isSelected={isSelected}
                   isEditMode={isEditMode}
-                  onKeyDown={props.onKeyDown}
                   onClick={props.onClick}
                   onFocus={props.onFocus}
                   onChange={props.onChange}/>
@@ -241,10 +246,6 @@ var Row = React.createClass({
 })
 
 var ReadOnlyCell = React.createClass({
-  handleKeyDown: function(e) {
-    var me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.onKeyDown(me, e);
-  },
   handleCellClick: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onClick(me, e);
@@ -259,7 +260,6 @@ var ReadOnlyCell = React.createClass({
     var className = isSelected ? "cell selected" : "cell";
     return (
       <td tabIndex="0" className={className}
-        onKeyDown={this.handleKeyDown}
         onClick={this.handleCellClick}
         onFocus={this.handleOnFocus}
         ref={function(self){
@@ -311,17 +311,6 @@ var options=[
 ];
 
 var TextCell = React.createClass({
-  onKeyDown: function(e) {
-    /*
-      Every cell must propagate escape to the parent for it to handle
-      TODO: Make this capture instead of bubbling, 
-      and let the spreadsheet handle this.
-    */
-    if (e.key === 'Escape') {
-      var me = {"row": this.props.rownum, "col": this.props.colnum};
-      this.props.onKeyDown(me, e);
-    }
-  },
   onChange: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onChange(me, e.target.value);
@@ -347,17 +336,6 @@ var TextCell = React.createClass({
 })
 
 var SelectCell = React.createClass({
-  onKeyDown: function(e) {
-    /*
-      Every cell must propagate escape to the parent for it to handle
-      TODO: Make this capture instead of bubbling, 
-      and let the spreadsheet handle this.
-    */
-    if (e.key === 'Escape') {
-      var me = {"row": this.props.rownum, "col": this.props.colnum};
-      this.props.onKeyDown(me, e);
-    }
-  },
   onChange: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onChange(me, e ? e.value: "");
