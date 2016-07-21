@@ -46,9 +46,14 @@
   background-color: #eee;
 }
 
+.cell.error {
+  outline: 2px solid red;
+}
+
 .grid .cell {
   padding: 5px;
 }
+
 
 .grid .selected {
   background-color: #eee;

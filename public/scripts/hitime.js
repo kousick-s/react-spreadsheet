@@ -118,7 +118,6 @@ var SpreadSheetContainer = React.createClass({
   },
   handleKeyDownCapture: function(e) {
     if (e.key === 'Escape') {
-      //console.log(e);
       var selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": false});
       this.setState({"selectedCell": selectedCell});
       e.preventDefault();
@@ -274,7 +273,7 @@ var Row = React.createClass({
 
           return <Renderer data={cell} 
                   rownum={rownum} colnum={colnum}
-                  key={rownum + "-" + colnum + isEditMode}
+                  key={rownum + "-" + colnum}
                   isSelected={isSelected}
                   isEditMode={isEditMode}
                   onClick={props.onClick}
@@ -295,6 +294,10 @@ var ReadOnlyCell = React.createClass({
     var props = this.props;
     var isSelected = props.isSelected;
     var className = isSelected ? "cell selected" : "cell";
+    if (this.props.hasError) {
+      className = className + " error";
+    }
+
     return (
       <td tabIndex="0" className={className}
         onClick={this.handleCellClick}
@@ -328,6 +331,7 @@ var TextCell = React.createClass({
                 self.focus();
               }
             }}
+          pattern={props.pattern}
           onChange={this.onChange}
           value={this.props.data}/>
       </td>
@@ -362,7 +366,16 @@ var SelectCell = React.createClass({
 
 var TimeSpentCell = React.createClass({
   render: function() {
-    function toDisplayString(totalMinutes) {
+    function parse(value) {
+      return Math.floor(Number(value));
+    }
+
+    function toDisplayString(value) {
+      var totalMinutes = parse(value);
+      if (!totalMinutes) {
+        return value;
+      }
+
       var hours = Math.floor(totalMinutes / 60);
       var minutes = totalMinutes % 60;
       var displayString = "";
@@ -378,8 +391,13 @@ var TimeSpentCell = React.createClass({
       return displayString;
     }
 
-    var displayString = toDisplayString(this.props.data);
-    var myprops = Object.assign({}, this.props, {"data": displayString});
+    var displayString = this.props.isEditMode ? this.props.data : toDisplayString(this.props.data);
+    var myprops = Object.assign({}, this.props);
+    myprops["data"] = displayString;
+    myprops["pattern"] = "[0-9hmHM .:]";
+    
+    var hasError = !parse(this.props.data);
+    myprops["hasError"] = hasError;
 
     var Renderer;
     if(this.props.isEditMode) {
@@ -419,7 +437,7 @@ var WorkTypeCell = React.createClass({
         return workTypesDict[value]
       }
       else {
-        return "Invalid!";
+        return "";
       }
     }
 
