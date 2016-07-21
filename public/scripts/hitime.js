@@ -1,24 +1,38 @@
-if (typeof Object.assign != 'function') {
-  Object.assign = function(target) {
-    'use strict';
-    if (target == null) {
-      throw new TypeError('Cannot convert undefined or null to object');
-    }
-
-    target = Object(target);
-    for (var index = 1; index < arguments.length; index++) {
-      var source = arguments[index];
-      if (source != null) {
-        for (var key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
-          }
-        }
-      }
-    }
-    return target;
-  };
-}
+var workTypesDict = {
+    5:"Client Meet",
+    25:"Consulting",
+    13:"Debug",
+    6:"Demo",
+    14:"Deployment",
+    24:"Design",
+    1:"Dev",
+    17:"Documentation",
+    29:"Email",
+    28:"Finance",
+    2:"Help",
+    33:"Holiday",
+    23:"Internal",
+    9:"Interview",
+    15:"Learning",
+    4:"Meeting",
+    16:"Mock up",
+    26:"Onboarding",
+    11:"OOO",
+    10:"Other",
+    8:"Planning",
+    12:"PMO",
+    21:"POC",
+    32:"Pre-sales",
+    18:"Presentation",
+    31:"Proposals",
+    27:"Recruitment",
+    3:"Review",
+    30:"Rework",
+    7:"Scrum",
+    20:"Testing",
+    22:"Training",
+    19: "UX"
+};
 
 var TimeSheetSummary = function(props) {
   return (
@@ -32,9 +46,9 @@ var SpreadSheetContainer = React.createClass({
   getInitialState: function() {
     return {
         "data": [
-          [1, "HashedIn", "Sales", 90, "Weekly Sales Meeting"],
-          [2, "Technology", "Training", 30, "Handling forms with React & Redux"],
-          [300, "Jican-Sales", "Review", 10, "Presentation Review"]
+          [1, "HASHEDIN-SALES", 4, 90, "Weekly Sales Meeting"],
+          [2, "TECHNOLOGY", 6, 30, "Handling forms with React & Redux"],
+          [300, "JICAN-SALES", 3, 10, "Presentation Review"]
         ],
         "headerRow": ["#", "Code", "Type", "Time Spent", "Description"],
         "selectedCell": {
@@ -238,7 +252,7 @@ var Row = React.createClass({
     var props = this.props;
     
     var viewModeRenderers = [IndexCell, ReadOnlyCell, 
-                      ReadOnlyCell, TimeSpentCell, ReadOnlyCell];
+                      WorkTypeCell, TimeSpentCell, ReadOnlyCell];
     var editModeRenderers = [IndexCell, CodeCell, 
                       WorkTypeCell, TimeSpentCell, TextCell];
     var selectedCell = props.selectedCell;
@@ -400,9 +414,27 @@ var CodeCell = React.createClass({
 
 var WorkTypeCell = React.createClass({
   render: function() {
-    return (
-      <SelectCell {...this.props} options={worktypes}/>
-    )
+    function toDisplayString(value) {
+      if (value in workTypesDict) {
+        return workTypesDict[value]
+      }
+      else {
+        return "Invalid!";
+      }
+    }
+
+    var myprops;
+    var Renderer;
+    if(this.props.isEditMode) {
+      myprops = this.props;
+      Renderer = SelectCell;
+    }
+    else {
+      myprops = Object.assign({}, 
+            this.props, {"data": toDisplayString(this.props.data)});
+      Renderer = ReadOnlyCell;
+    }
+    return <Renderer {...myprops} options={worktypes}/> 
   }
 })
 
@@ -514,6 +546,7 @@ var codes = [
     {"value":"VAL-OTCE-DEV","label":"VAL-OTCE-DEV"},
     {"value":"VALOROTCE-SALES","label":"OTC Engine"}
 ];
+
 var worktypes = [
     {"value":"5","label":"Client Meet"},
     {"value":"25","label":"Consulting"},
@@ -549,3 +582,90 @@ var worktypes = [
     {"value":"22","label":"Training"},
     {"value":"19","label":"UX"}
 ];
+
+if (typeof Object.assign != 'function') {
+  Object.assign = function(target) {
+    'use strict';
+    if (target == null) {
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    target = Object(target);
+    for (var index = 1; index < arguments.length; index++) {
+      var source = arguments[index];
+      if (source != null) {
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+    }
+    return target;
+  };
+}
+
+// Production steps of ECMA-262, Edition 5, 15.4.4.18
+// Reference: http://es5.github.io/#x15.4.4.18
+if (!Array.prototype.forEach) {
+
+  Array.prototype.forEach = function(callback, thisArg) {
+
+    var T, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling toObject() passing the
+    // |this| value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get() internal
+    // method of O with the argument "length".
+    // 3. Let len be toUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If isCallable(callback) is false, throw a TypeError exception. 
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let
+    // T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let k be 0
+    k = 0;
+
+    // 7. Repeat, while k < len
+    while (k < len) {
+
+      var kValue;
+
+      // a. Let Pk be ToString(k).
+      //    This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty
+      //    internal method of O with argument Pk.
+      //    This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal
+        // method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Call the Call internal method of callback with T as
+        // the this value and argument list containing kValue, k, and O.
+        callback.call(T, kValue, k, O);
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+    // 8. return undefined
+  };
+}
+
