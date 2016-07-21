@@ -236,8 +236,11 @@ var SpreadSheet = React.createClass({
 var Row = React.createClass({
   render: function() {
     var props = this.props;
-    var renderers = [ReadOnlyCell, SelectCell, 
-                      SelectCell, TextCell, TextCell];
+    
+    var viewModeRenderers = [IndexCell, ReadOnlyCell, 
+                      ReadOnlyCell, TimeSpentCell, ReadOnlyCell];
+    var editModeRenderers = [IndexCell, CodeCell, 
+                      WorkTypeCell, TimeSpentCell, TextCell];
     var selectedCell = props.selectedCell;
     var rownum = props.rownum;
 
@@ -249,10 +252,10 @@ var Row = React.createClass({
           var isEditMode = isSelected && selectedCell.isEditMode;
           var Renderer;
           if(isEditMode) {
-            Renderer = renderers[colnum];
+            Renderer = editModeRenderers[colnum];
           }
           else {
-            Renderer = ReadOnlyCell;
+            Renderer = viewModeRenderers[colnum];
           }
 
           return <Renderer data={cell} 
@@ -270,10 +273,6 @@ var Row = React.createClass({
 })
 
 var ReadOnlyCell = React.createClass({
-  handleCellClick: function(e) {
-    var me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.onClick(me, e);
-  },
   handleOnFocus: function(e) {
     var me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onFocus(me, e);
@@ -296,43 +295,6 @@ var ReadOnlyCell = React.createClass({
     );
   }
 })
-
-var options=[
-    { value: 'Client Meet', label: 'Client Meet'},
-    { value: 'Consulting', label: 'Consulting'},
-    { value: 'Debug', label: 'Debug'},
-    { value: 'Demo', label: 'Demo'},
-    { value: 'Deployment', label: 'Deployment'},
-    { value: 'Design', label: 'Design'},
-    { value: 'Dev', label: 'Dev'},
-    { value: 'Documentation', label: 'Documentation'},
-    { value: 'Email', label: 'Email'},
-    { value: 'Finance', label: 'Finance'},
-    { value: 'Help', label: 'Help'},
-    { value: 'Holiday', label: 'Holiday'},
-    { value: 'Holiday', label: 'Holiday'},
-    { value: 'Internal', label: 'Internal'},
-    { value: 'Interview', label: 'Interview'},
-    { value: 'Learning', label: 'Learning'},
-    { value: 'Meeting', label: 'Meeting'},
-    { value: 'Mock up', label: 'Mock up'},
-    { value: 'Onboarding', label: 'Onboarding'},
-    { value: 'OOO', label: 'OOO'},
-    { value: 'Other', label: 'Other'},
-    { value: 'Planning', label: 'Planning'},
-    { value: 'PMO', label: 'PMO'},
-    { value: 'POC', label: 'POC'},
-    { value: 'Presales', label: 'Presales'},
-    { value: 'Presentation', label: 'Presentation'},
-    { value: 'Proposals', label: 'Proposals'},
-    { value: 'Recruitment', label: 'Recruitment'},
-    { value: 'Review', label: 'Review'},
-    { value: 'Rework', label: 'Rework'},
-    { value: 'Scrum', label: 'Scrum'},
-    { value: 'Testing', label: 'Testing'},
-    { value: 'Training', label: 'Training'},
-    { value: 'UX', label: 'UX'}
-];
 
 var TextCell = React.createClass({
   onChange: function(e) {
@@ -371,7 +333,7 @@ var SelectCell = React.createClass({
     return (
       <td className="cell selected" 
         onKeyDownCapture={this.onKeyDown}>
-        <Select className="selectcell" options={options}
+        <Select className="selectcell" options={this.props.options}
           ref={function(self){
               if(isSelected && self != null) {
                 self.focus();
@@ -381,6 +343,66 @@ var SelectCell = React.createClass({
           value={this.props.data}/>
       </td>
     );
+  }
+})
+
+var TimeSpentCell = React.createClass({
+  render: function() {
+    function toDisplayString(totalMinutes) {
+      var hours = Math.floor(totalMinutes / 60);
+      var minutes = totalMinutes % 60;
+      var displayString = "";
+      if (hours) {
+        displayString = hours + "h";
+      }
+      if (minutes) {
+        if(displayString) {
+          displayString = displayString + " ";
+        }
+        displayString = displayString + minutes + "m";
+      }
+      return displayString;
+    }
+
+    var displayString = toDisplayString(this.props.data);
+    var myprops = Object.assign({}, this.props, {"data": displayString});
+
+    var Renderer;
+    if(this.props.isEditMode) {
+      Renderer = TextCell;
+    }
+    else {
+      Renderer = ReadOnlyCell;
+    }
+    return (
+      <Renderer {...myprops}/>
+    )
+  }
+})
+
+var IndexCell = React.createClass({
+  render: function() {
+    var index = this.props.rownum + 1;
+    var myprops = Object.assign({}, this.props, {"data": index});
+    return (
+      <ReadOnlyCell {...myprops}/>
+    )
+  }
+})
+
+var CodeCell = React.createClass({
+  render: function() {
+    return (
+      <SelectCell {...this.props} options={codes}/>
+    )
+  }
+})
+
+var WorkTypeCell = React.createClass({
+  render: function() {
+    return (
+      <SelectCell {...this.props} options={worktypes}/>
+    )
   }
 })
 
@@ -411,3 +433,119 @@ var isPrintableChar = function(keycode) {
         (keycode > 218 && keycode < 223);   // [\]' (in order)
   return valid;
 }
+
+
+var codes = [
+{"value":"ACC-TREV-DEL","label":"ACC-TREV-DEL"},
+    {"value":"ACME-SALES","label":"ACME-SALES"},
+    {"value":"ARU-CCUI-DEL","label":"ARU-CCUI-DEL"},
+    {"value":"ARUBA-SALES","label":"ARUBA-SALES"},
+    {"value":"ARUBAUTO","label":"ARUBAUTO"},
+    {"value":"BUZ-PLAT-DEL","label":"BUZ-PLAT-DEL"},
+    {"value":"BUZ-PLAT-OPS","label":"BUZ-PLAT-OPS"},
+    {"value":"BUZZTIME-SALES","label":"BUZZTIME-SALES"},
+    {"value":"DBS-CDME-DEL","label":"DBS-CDME-DEL"},
+    {"value":"DBS-SALES","label":"DBS-SALES"},
+    {"value":"EOT","label":"EOT"},
+    {"value":"ETRL","label":"ETRL"},
+    {"value":"EXAMSOFT-SALES","label":"EXAMSOFT-SALES"},
+    {"value":"EXM-BRDG-DEL","label":"EXM-BRDG-DEL"},
+    {"value":"EZETAB-SALES","label":"EZETAB-SALES"},
+    {"value":"EZE_WEBS_DEL","label":"EZE_WEBS_DEL"},
+    {"value":"FRL-RELM-DEL","label":"FRL-RELM-DEL"},
+    {"value":"FRROLE-SALES","label":"FRROLE-SALES"},
+    {"value":"HASHEDIN","label":"HASHEDIN"},
+    {"value":"HASHEDIN-SALES","label":"HASHEDIN-SALES"},
+    {"value":"HIM_PRIM_DEL","label":"HIM_PRIM_DEL"},
+    {"value":"HIN-DESN-DEL","label":"HIN-DESN-DEL"},
+    {"value":"HIN-DOPS-DEL","label":"HIN-DOPS-DEL"},
+    {"value":"HIN-HRRC-DEL","label":"HIN-HRRC-DEL"},
+    {"value":"HIN-HUEX-DEL","label":"HIN-HUEX-DEL"},
+    {"value":"HIN-HWAY-DEL","label":"HIN-HWAY-DEL"},
+    {"value":"HIN-ITSU-DEL","label":"HIN-ITSU-DEL"},
+    {"value":"HIN-MOM-DEL","label":"HIN-MOM-DEL"},
+    {"value":"HIN-SSON-DEL","label":"HIN-SSON-DEL"},
+    {"value":"HIN-SSON-OPS","label":"HIN-SSON-OPS"},
+    {"value":"HIN-TRAK-DEL","label":"HIN-TRAK-DEL"},
+    {"value":"HIN-WBST-DEL","label":"HIN-WBST-DEL"},
+    {"value":"HIN-WBST-OPS","label":"HIN-WBST-OPS"},
+    {"value":"HIVEMINDS-SALES","label":"HIVEMINDS-SALES"},
+    {"value":"HONEYWELL-SALES","label":"HONEYWELL-SALES"},
+    {"value":"HWL-EMBER-DEL","label":"HWL-EMBER-DEL"},
+    {"value":"HWL-SSS-DEL","label":"HWL-SSS-DEL"},
+    {"value":"HWL-USPL-DEL","label":"HWL-USPL-DEL"},
+    {"value":"IDE-SWAI-DEL","label":"IDE-SWAI-DEL"},
+    {"value":"IDERA-SALES","label":"IDERA-SALES"},
+    {"value":"IDR-CW31-DEL","label":"IDR-CW31-DEL"},
+    {"value":"IDR-DEDI-DEL","label":"IDR-DEDI-DEL"},
+    {"value":"IND-MBLT-DEL","label":"IND-MBLT-DEL"},
+    {"value":"INDEED-SALES","label":"INDEED-SALES"},
+    {"value":"INSIDE-SALES","label":"INSIDE-SALES"},
+    {"value":"JIC-FSVC-DEL","label":"JIC-FSVC-DEL"},
+    {"value":"JICAN-SALES","label":"JICAN-SALES"},
+    {"value":"KDT-DOPS-DEL","label":"KDT-DOPS-DEL"},
+    {"value":"KickDrum-SALES","label":"KickDrum-SALES"},
+    {"value":"MAX-MXDC-DEL","label":"MAX-MXDC-DEL"},
+    {"value":"MAX-SALES","label":"MAX-SALES"},
+    {"value":"NEXTIT-SALES","label":"NEXTIT-SALES"},
+    {"value":"NIT-CHRT-DEL","label":"NIT-CHRT-DEL"},
+    {"value":"NIT-DASH-DEV","label":"NIT-DASH-DEV"},
+    {"value":"NIT-TEVD-DEL","label":"NIT-TEVD-DEL"},
+    {"value":"NIT_REDU_DEL","label":"NIT_REDU_DEL"},
+    {"value":"OCB-REPO-DEL","label":"OCB-REPO-DEL"},
+    {"value":"OCBC-SALES","label":"OCBC-SALES"},
+    {"value":"P4P-PARD-DEL","label":"P4P-PARD-DEL"},
+    {"value":"P4P-PARD-OPS","label":"P4P-PARD-OPS"},
+    {"value":"P4P-SALES","label":"P4P-SALES"},
+    {"value":"PCL-UIUX-DEL","label":"PCL-UIUX-DEL"},
+    {"value":"PCLOUDY-SALES","label":"PCLOUDY-SALES"},
+    {"value":"PMO","label":"PMO"},
+    {"value":"PRAGMATIC-SALES","label":"PRAGMATIC-SALES"},
+    {"value":"PRD-PLFM-DEV","label":"PRD-PLFM-DEV"},
+    {"value":"PREDICA-SALES","label":"PREDICA-SALES"},
+    {"value":"PRG-APIN-DEL","label":"PRG-APIN-DEL"},
+    {"value":"RHODIUM","label":"RHODIUM"},
+    {"value":"STMicro-SALES","label":"STMicro-SALES"},
+    {"value":"SYN-BIAN-DEL","label":"SYN-BIAN-DEL"},
+    {"value":"SYNCRON-SALES","label":"SYNCRON-SALES"},
+    {"value":"TDA-BATL-DEV","label":"TDA-BATL-DEV"},
+    {"value":"TDABATTLEFD-SAL","label":"TDABATTLEFD-SAL"},
+    {"value":"TECHNOLOGY","label":"TECHNOLOGY"},
+    {"value":"VAL-OTCE-DEV","label":"VAL-OTCE-DEV"},
+    {"value":"VALOROTCE-SALES","label":"OTC Engine"}
+];
+var worktypes = [
+    {"value":"5","label":"Client Meet"},
+    {"value":"25","label":"Consulting"},
+    {"value":"13","label":"Debug"},
+    {"value":"6","label":"Demo"},
+    {"value":"14","label":"Deployment"},
+    {"value":'24',"label":"Design"},
+    {"value":"1","label":"Dev"},
+    {"value":"17","label":"Documentation"},
+    {"value":"29","label":"Email"},
+    {"value":"28","label":"Finance"},
+    {"value":"2","label":"Help"},
+    {"value":"33","label":"Holiday"},
+    {"value":"23","label":"Internal"},
+    {"value":"9","label":"Interview"},
+    {"value":"15","label":"Learning"},
+    {"value":"4","label":"Meeting"},
+    {"value":"16","label":"Mock up"},
+    {"value":"26","label":"Onboarding"},
+    {"value":"11","label":"OOO"},
+    {"value":"10","label":"Other"},
+    {"value":"8","label":"Planning"},
+    {"value":"12","label":"PMO"},
+    {"value":"21","label":"POC"},
+    {"value":"32","label":"Pre-sales"},
+    {"value":"18","label":"Presentation"},
+    {"value":"31","label":"Proposals"},
+    {"value":"27","label":"Recruitment"},
+    {"value":"3","label":"Review"},
+    {"value":"30","label":"Rework"},
+    {"value":"7","label":"Scrum"},
+    {"value":"20","label":"Testing"},
+    {"value":"22","label":"Training"},
+    {"value":"19","label":"UX"}
+];

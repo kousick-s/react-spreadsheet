@@ -7,13 +7,13 @@
   width: 35px;
 }
 .grid col.code {
-  width: 15%;
+  width: 20%;
 }
 .grid col.type {
   width: 12%;
 }
 .grid col.time {
-  width: 5%;
+  width: 70px;
 }
 .grid col.description {
   width: 65%;
