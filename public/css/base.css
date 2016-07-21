@@ -5,6 +5,7 @@
 }
 .grid col.id {
   width: 35px;
+  background-color: #ccc;
 }
 .grid col.code {
   width: 20%;
@@ -44,10 +45,6 @@
 
 .grid .cell:hover {
   background-color: #eee;
-}
-
-.cell.error {
-  outline: 2px solid red;
 }
 
 .grid .cell {

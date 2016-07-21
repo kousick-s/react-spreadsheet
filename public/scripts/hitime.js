@@ -46,17 +46,23 @@ var SpreadSheetContainer = React.createClass({
   getInitialState: function() {
     return {
         "data": [
-          [1, "HASHEDIN-SALES", 4, 90, "Weekly Sales Meeting"],
-          [2, "TECHNOLOGY", 6, 30, "Handling forms with React & Redux"],
-          [300, "JICAN-SALES", 3, 10, "Presentation Review"]
+          ["HASHEDIN-SALES", 4, 90, "Weekly Sales Meeting"],
+          ["TECHNOLOGY", 6, 30, "Handling forms with React & Redux"],
+          ["JICAN-SALES", 3, 10, "Presentation Review"]
         ],
-        "headerRow": ["#", "Code", "Type", "Time Spent", "Description"],
+        "headerRow": ["Code", "Type", "Time Spent", "Description"],
         "selectedCell": {
           "row": 0,
           "col": 0,
           "isEditMode": false
         }
     }
+  },
+  numRows: function() {
+    return this.state.data.length;
+  },
+  numColumns: function() {
+    return this.state.headerRow.length + 1;
   },
   moveRight: function() {
     this.moveHorizontally(1);
@@ -72,7 +78,7 @@ var SpreadSheetContainer = React.createClass({
   },
   addRows: function(numRows) {
     var data = this.state.data;
-    data.push(["", "", "", "", ""]);
+    data.push(["", "", "", ""]);
     this.setState({"data": data});
   },
   constrainHorizontally: function(pos) {
@@ -227,6 +233,7 @@ var SpreadSheet = React.createClass({
         </colgroup>
         <thead>
         <tr>
+          <th>#</th>
           {props.headerRow.map(function(cell, colnum){
             return <th key={colnum}>{cell}</th>
           })}
@@ -250,15 +257,16 @@ var Row = React.createClass({
   render: function() {
     var props = this.props;
     
-    var viewModeRenderers = [IndexCell, ReadOnlyCell, 
+    var viewModeRenderers = [ReadOnlyCell, 
                       WorkTypeCell, TimeSpentCell, ReadOnlyCell];
-    var editModeRenderers = [IndexCell, CodeCell, 
+    var editModeRenderers = [CodeCell, 
                       WorkTypeCell, TimeSpentCell, TextCell];
     var selectedCell = props.selectedCell;
     var rownum = props.rownum;
 
     return (
       <tr>
+        <IndexCell rownum={rownum}/>
         {this.props.data.map(function(cell, colnum){
           var isSelected = (rownum === selectedCell.row && 
               colnum === selectedCell.col);
@@ -323,15 +331,13 @@ var TextCell = React.createClass({
     var isSelected = props.isSelected;
 
     return (
-      <td className="cell selected"
-        onKeyDown={this.onKeyDown}>
+      <td className="cell selected">
         <input type="text" className="textcell"
           ref={function(self){
               if(isSelected && self != null) {
                 self.focus();
               }
             }}
-          pattern={props.pattern}
           onChange={this.onChange}
           value={this.props.data}/>
       </td>
@@ -349,8 +355,7 @@ var SelectCell = React.createClass({
     var isSelected = props.isSelected;
 
     return (
-      <td className="cell selected" 
-        onKeyDownCapture={this.onKeyDown}>
+      <td className="cell selected">
         <Select className="selectcell" options={this.props.options}
           ref={function(self){
               if(isSelected && self != null) {
@@ -365,6 +370,10 @@ var SelectCell = React.createClass({
 })
 
 var TimeSpentCell = React.createClass({
+  onChange: function(e) {
+    var me = {"row": this.props.rownum, "col": this.props.colnum};
+    this.props.onChange(me, e.target.value);
+  },
   render: function() {
     function parse(value) {
       return Math.floor(Number(value));
@@ -392,33 +401,37 @@ var TimeSpentCell = React.createClass({
     }
 
     var displayString = this.props.isEditMode ? this.props.data : toDisplayString(this.props.data);
-    var myprops = Object.assign({}, this.props);
-    myprops["data"] = displayString;
-    myprops["pattern"] = "[0-9hmHM .:]";
-    
     var hasError = !parse(this.props.data);
-    myprops["hasError"] = hasError;
-
-    var Renderer;
+    var isSelected = this.props.isSelected;
+    
     if(this.props.isEditMode) {
-      Renderer = TextCell;
+      return (
+      <td className="cell selected">
+        <input type="text" className="textcell"
+          ref={function(self){
+              if(isSelected && self != null) {
+                self.focus();
+              }
+            }}
+          onChange={this.onChange}
+          value={displayString}/>
+      </td>
+      )
     }
     else {
-      Renderer = ReadOnlyCell;
+      var myprops = Object.assign({}, this.props, {"data": displayString});
+      return (<ReadOnlyCell {...myprops}/>)
     }
-    return (
-      <Renderer {...myprops}/>
-    )
   }
 })
 
 var IndexCell = React.createClass({
   render: function() {
-    var index = this.props.rownum + 1;
-    var myprops = Object.assign({}, this.props, {"data": index});
     return (
-      <ReadOnlyCell {...myprops}/>
-    )
+      <td className="cell">
+        {this.props.rownum + 1}
+      </td>
+    );
   }
 })
 
