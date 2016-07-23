@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SpreadSheetContainer from './spreadsheet';
+import SpreadSheet from './spreadsheet';
 import './index.css';
 
 ReactDOM.render(
-  <SpreadSheetContainer />,
+  <SpreadSheet />,
   document.getElementById('root')
 );

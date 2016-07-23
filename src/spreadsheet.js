@@ -28,7 +28,7 @@ function isPrintableChar(keycode) {
   return valid;
 }
 
-class SpreadSheetContainer extends Component {
+class SpreadSheet extends Component {
   constructor() {
     super();
     this.state = {
@@ -50,7 +50,7 @@ class SpreadSheetContainer extends Component {
       "constrainHorizontally", "constrainVertically",
       "moveHorizontally", "moveVertically",
       "handleKeyDown", "handleKeyDownCapture", "handleClick",
-      "handleOnFocus", "clearCell", "handleOnChange"]);
+      "clearCell", "handleOnChange"]);
   }
 
   numRows() {
@@ -196,11 +196,6 @@ class SpreadSheetContainer extends Component {
     this.setState({"selectedCell": selectedCell});
   }
 
-  handleOnFocus(cell, e) {
-    let selectedCell = Object.assign({}, this.state.selectedCell, cell);
-    this.setState({"selectedCell": selectedCell});
-  }
-
   clearCell() {
     let data = this.state.data;
     let selectedCell = this.state.selectedCell;
@@ -217,19 +212,18 @@ class SpreadSheetContainer extends Component {
   
   render() {
     return (
-        <SpreadSheet data={this.state.data} 
+        <SpreadSheetWidget data={this.state.data} 
           headerRow={this.state.headerRow}
           selectedCell={this.state.selectedCell}
           onKeyDown={this.handleKeyDown}
           onKeyDownCapture={this.handleKeyDownCapture}
           onClick={this.handleClick}
-          onFocus={this.handleOnFocus}
           onChange={this.handleOnChange}/>
     )
   }
 }
 
-class SpreadSheet extends Component {
+class SpreadSheetWidget extends Component {
   render() {
     let props = this.props;
     return (
@@ -257,7 +251,6 @@ class SpreadSheet extends Component {
                     key={rownum}
                     selectedCell={props.selectedCell}
                     onClick={props.onClick}
-                    onFocus={props.onFocus}
                     onChange={props.onChange}/>
           })}
         </tbody>
@@ -267,38 +260,10 @@ class SpreadSheet extends Component {
 }
 
 class ReadOnlyCell extends Component {
-  constructor() {
-    super();
-    es6BindAll(this, ["handleOnFocus", "handleCellClick"]);
-  }
-  handleOnFocus(e) {
-    let me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.onFocus(me, e);
-  }
-  handleCellClick(e) {
-    let me = {"row": this.props.rownum, "col": this.props.colnum};
-    this.props.onClick(me, e);
-  }
-
   render() {
-    let props = this.props;
-    let isSelected = props.isSelected;
-    let className = isSelected ? "cell selected" : "cell";
-    if (this.props.hasError) {
-      className += " error";
-    }
-
     return (
-      <td tabIndex="0" className={className}
-        onClick={this.handleCellClick}
-        onFocus={this.handleOnFocus}
-        ref={function(self){
-          if(isSelected && self != null) {
-            self.focus();
-          }
-        }}>
-        {this.props.data}
-      </td>
+      <span>{this.props.data}</span>
+      
     );
   }
 }
@@ -311,6 +276,7 @@ class TextCell extends Component {
 
   handleChange(e) {
     let me = {"row": this.props.rownum, "col": this.props.colnum};
+    console.log(e, me);
     this.props.onChange(me, e.target.value);
   }
 
@@ -319,16 +285,15 @@ class TextCell extends Component {
     let isSelected = props.isSelected;
 
     return (
-      <td className="cell selected">
-        <input type="text" className="textcell"
-          ref={function(self){
-              if(isSelected && self != null) {
-                self.focus();
-              }
-            }}
-          onChange={this.handleChange}
-          value={this.props.data}/>
-      </td>
+      <input type="text" className="textcell"
+        ref={function(self){
+            if(isSelected && self != null) {
+              self.focus();
+            }
+          }}
+        onChange={this.handleChange}
+        value={this.props.data}/>
+
     );
   }
 }
@@ -348,16 +313,14 @@ class SelectCell extends Component {
     let isSelected = props.isSelected;
 
     return (
-      <td className="cell selected">
-        <Select className="selectcell" options={this.props.options}
-          ref={function(self){
-              if(isSelected && self != null) {
-                self.focus();
-              }
-            }}
-          onChange={this.handleChange}
-          value={this.props.data}/>
-      </td>
+      <Select className="selectcell" options={this.props.options}
+        ref={function(self){
+            if(isSelected && self != null) {
+              self.focus();
+            }
+          }}
+        onChange={this.handleChange}
+        value={this.props.data}/>
     );
   }
 }
@@ -403,16 +366,15 @@ class TimeSpentCell extends Component {
     
     if(this.props.isEditMode) {
       return (
-      <td className="cell selected">
-        <input type="text" className="textcell"
-          ref={function(self){
-              if(isSelected && self != null) {
-                self.focus();
-              }
-            }}
-          onChange={this.handleChange}
-          value={displayString}/>
-      </td>
+      <input type="text" className="textcell"
+        ref={function(self){
+            if(isSelected && self != null) {
+              self.focus();
+            }
+          }}
+        onChange={this.handleChange}
+        value={displayString}/>
+    
       )
     }
     else {
@@ -425,9 +387,7 @@ class TimeSpentCell extends Component {
 class IndexCell extends Component {
   render() {
     return (
-      <td className="cell">
-        {this.props.rownum + 1}
-      </td>
+      <span>{this.props.rownum + 1}</span>
     );
   }
 }
@@ -479,11 +439,14 @@ class Row extends Component {
 
     return (
       <tr>
-        <IndexCell rownum={rownum}/>
+        <td className="cell"><IndexCell rownum={rownum}/></td>
         {this.props.data.map(function(cell, colnum){
           let isSelected = (rownum === selectedCell.row && 
               colnum === selectedCell.col);
           let isEditMode = isSelected && selectedCell.isEditMode;
+          let className = isSelected ? "cell selected" : "cell";
+          let me = {"row": rownum, "col": colnum};
+
           let Renderer;
           if(isEditMode) {
             Renderer = editModeRenderers[colnum];
@@ -491,19 +454,38 @@ class Row extends Component {
           else {
             Renderer = viewModeRenderers[colnum];
           }
+          
+          function handleCellClick(e) {
+            props.onClick(me, e);
+          }
 
-          return <Renderer data={cell} 
-                  rownum={rownum} colnum={colnum}
-                  key={rownum + "-" + colnum}
-                  isSelected={isSelected}
-                  isEditMode={isEditMode}
-                  onClick={props.onClick}
-                  onFocus={props.onFocus}
-                  onChange={props.onChange}/>
+          return (
+            <td tabIndex="0" className={className}
+              key={rownum + "-" + colnum}
+              onClick={handleCellClick}
+              ref={function(self){
+                /*
+                1. We want the cell to have focus if it is selected
+                2. But if it is edit mode, then we want the control
+                   inside the the td (i.e. Renderer) to have focus
+                */
+
+                if(!isEditMode && isSelected && self != null) {
+                  self.focus();
+                }
+              }}
+            >
+              <Renderer data={cell} 
+                rownum={rownum} colnum={colnum}
+                isSelected={isSelected}
+                isEditMode={isEditMode}
+                onChange={props.onChange}/>
+            </td>
+            )
         })}
       </tr>
     )
   }
 }
 
-export default SpreadSheetContainer;
+export default SpreadSheet;
