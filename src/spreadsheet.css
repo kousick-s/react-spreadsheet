@@ -1,0 +1,57 @@
+.grid {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+}
+.grid col.id {
+  width: 35px;
+  background-color: #ccc;
+}
+.grid col.code {
+  width: 18%;
+}
+.grid col.type {
+  width: 12%;
+}
+.grid col.time {
+  width: 70px;
+}
+.grid col.description {
+  width: 65%;
+}
+.grid td {
+  border: 1px solid #999;
+  padding: 3px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  height: 48px;
+}
+
+.grid th {
+  border: 1px solid #999;
+  background-color: #ccc;
+  padding: 1px 3px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.grid .textcell {
+  background-color: #eee;
+  border: none;
+  outline: 1px solid transparent;
+  width: 100%;
+  height: 100%;
+}
+
+.grid .cell:hover {
+  background-color: #eee;
+}
+
+.grid .cell {
+  padding: 5px;
+}
+
+.grid .selected {
+  background-color: #eee;
+  outline: 2px solid blue;
+}
