@@ -185,8 +185,12 @@ class SpreadSheet extends Component {
       }
     }
     else if (isPrintableChar(e.keyCode)) {
-      let selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": true});
-      this.setState({"selectedCell": selectedCell});
+      if(!this.state.selectedCell.isEditMode) {
+        let selectedCell = Object.assign({}, this.state.selectedCell, {"isEditMode": true});
+        let data = this.state.data;
+        data[selectedCell.row][selectedCell.col] = "";
+        this.setState({"data": data, "selectedCell": selectedCell});
+      }
     }
   }
 
