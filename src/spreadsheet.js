@@ -269,11 +269,15 @@ class SpreadSheet extends Component {
 class ReadOnlyCell extends Component {
   constructor() {
     super();
-    es6BindAll(this, ["handleOnFocus"]);
+    es6BindAll(this, ["handleOnFocus", "handleCellClick"]);
   }
   handleOnFocus(e) {
     let me = {"row": this.props.rownum, "col": this.props.colnum};
     this.props.onFocus(me, e);
+  }
+  handleCellClick(e) {
+    let me = {"row": this.props.rownum, "col": this.props.colnum};
+    this.props.onClick(me, e);
   }
 
   render() {
