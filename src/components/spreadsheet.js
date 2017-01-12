@@ -1,22 +1,9 @@
 import React, { Component } from 'react';
-import Select from 'react-select';
-import SpreadSheetWidget from './components'
-import './react-select.min.css';
-import './spreadsheet.css';
+import SpreadSheetWidget from './SpreadSheetWidget';
+import '../react-select.min.css';
+import '../spreadsheet.css';
+import es6BindAll from '../utils/es6BindAll';
 
-import {TIMESHEET_CODES, WORKTYPES, WORKTYPES_DICT} from './constants';
-
-function es6BindAll(context, methodNames) {
-  // eslint-disable-next-line array-callback-return
-  methodNames.map(function(methodName) {
-    if (!(methodName in context)) {
-      let e = new Error(methodName + " does not exist in " + context.constructor.name +
-        ". Check the call to es6BindAll in " + context.constructor.name);
-      throw e;
-    }
-    context[methodName] = context[methodName].bind(context);
-  });
-}
 
 function isPrintableChar(keycode) {
   let valid = 
